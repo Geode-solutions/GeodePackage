@@ -1,0 +1,29 @@
+{
+  "name": "geode-package",
+  "version": "0.0.0-semantically-released",
+  "description": "Package Geode and its open source modules",
+  "author": {
+    "name": "Geode-solutions",
+    "email": "contact@geode-solutions.com",
+    "url": "https://geode-solutions.com/"
+  },
+  "homepage": "https://github.com/Geode-solutions/GeodePackage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Geode-solutions/GeodePackage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Geode-solutions/GeodePackage/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "node package"
+  },
+  "devDependencies": {
+    "@octokit/rest": "^17.9.2",
+    "archiver": "^4.0.1",
+    "extract-zip": "^2.0.0",
+    "mkdirp": "^1.0.4",
+    "node-fetch": "^2.6.0"
+  }
+}

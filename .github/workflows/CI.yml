@@ -28,7 +28,7 @@ jobs:
     - name: Compile
       run: |
         npm install
-        npm run build -- version ${{ matrix.python }}-${{ matrix.system }}
+        npm run build -- version python${{ matrix.python }}-${{ matrix.system }}
       env:
         TOKEN: ${{ secrets.TOKEN }}   
     - name: Notify slack

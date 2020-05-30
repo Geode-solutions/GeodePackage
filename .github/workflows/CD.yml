@@ -31,13 +31,13 @@ jobs:
         version="${GITHUB_REF##*/*/}"
         echo ::set-output name=version::$version
         npm install
-        npm run build -- $version ${{ matrix.python }}-${{ matrix.system }}
+        npm run build -- $version python${{ matrix.python }}-${{ matrix.system }}
       env:
         TOKEN: ${{ secrets.TOKEN }}   
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:
-        files: "GeodePackage-${{ steps.package.outputs.version }}-${{ matrix.system }}.zip"
+        files: "GeodePackage-${{ steps.package.outputs.version }}-python${{ matrix.python }}-${{ matrix.system }}.zip"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Notify slack

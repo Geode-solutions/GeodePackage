@@ -7,12 +7,16 @@ on:
 jobs:
   build-linux:
     runs-on: ubuntu-18.04
-    container: ${{ matrix.config.container }}
     strategy:
       matrix:
-        config:
-        - {container: "geodesolutions/ubuntu", system: ubuntu}
-        - {container: "geodesolutions/centos", system: rhel}
+        system: [ubuntu, darwin, win64]
+        python: [3.6, 3.7, 3.8]
+        exclude:
+          - system: win64
+            python: 3.8
+        include:
+          - system: rhel
+            python: 2.7
 
     steps:
     - uses: actions/checkout@v1
@@ -20,20 +24,20 @@ jobs:
       uses: actions/cache@v1.2.0
       with:
         path: node_modules
-        key: node-${{ matrix.config.system }}-${{ hashFiles('package-lock.json') }}
+        key: node-${{ hashFiles('package-lock.json') }}
     - name: Generate package
       id: package
       run: |
         version="${GITHUB_REF##*/*/}"
         echo ::set-output name=version::$version
         npm install
-        npm run build -- $version ${{ matrix.config.system }}
+        npm run build -- $version ${{ matrix.python }}-${{ matrix.system }}
       env:
         TOKEN: ${{ secrets.TOKEN }}   
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:
-        files: "GeodePackage-${{ steps.package.outputs.version }}-${{ matrix.config.system }}.zip"
+        files: "GeodePackage-${{ steps.package.outputs.version }}-${{ matrix.system }}.zip"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Notify slack
@@ -44,72 +48,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}    
-
-  build-mac:
-    runs-on: macos-latest
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Cache node modules
-      uses: actions/cache@v1.2.0
-      with:
-        path: node_modules
-        key: node-darwin-${{ hashFiles('package-lock.json') }}
-    - name: Generate package
-      id: package
-      run: |
-        version="${GITHUB_REF##*/*/}"
-        echo ::set-output name=version::$version
-        npm install
-        npm run build -- $version darwin
-      env:
-        TOKEN: ${{ secrets.TOKEN }}   
-    - name: Upload
-      uses: softprops/action-gh-release@v1
-      with:
-        files: "GeodePackage-${{ steps.package.outputs.version }}-darwin.zip"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Notify slack
-      if: failure() && github.ref == 'refs/heads/master'
-      uses: 8398a7/action-slack@v2
-      with:
-        status: failure
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  
-  build-windows:
-    runs-on: windows-2016
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Cache node modules
-      uses: actions/cache@v1.2.0
-      with:
-        path: node_modules
-        key: node-win64-${{ hashFiles('package-lock.json') }}
-    - name: Generate package
-      id: package
-      run: |
-        $version = ${env:GITHUB_REF} -replace 'refs\/tags\/', ''
-        echo "::set-output name=version::$version"
-        npm install
-        npm run build -- $version win64
-      env:
-        TOKEN: ${{ secrets.TOKEN }}       
-    - name: Upload
-      uses: softprops/action-gh-release@v1
-      with:
-        files: "GeodePackage-${{ steps.package.outputs.version }}-win64.zip"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Notify slack
-      if: failure() && github.ref == 'refs/heads/master'
-      uses: 8398a7/action-slack@v2
-      with:
-        status: failure
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        

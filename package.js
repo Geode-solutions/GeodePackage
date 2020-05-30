@@ -40,8 +40,10 @@ var octokit = new Octokit({auth: process.env.TOKEN});
 function getRelease(repo, tag, isModule) {
   const outputDirectory = isModule ? path.join(dir, "modules") : dir;
   return new Promise((resolve, reject) => {
+  console.log(repo, tag);
   octokit.repos.getReleaseByTag({owner, repo, tag}).then(release => {
     const release_id = release.data.id;
+    console.log(release);
     octokit.repos.listAssetsForRelease({owner, repo, release_id})
         .then(assets => {
           const asset = assets.data.find(asset => asset.name.includes(process.argv[3]));
@@ -71,6 +73,7 @@ function getRelease(repo, tag, isModule) {
           });
         });
       }).catch((error)=>{
+        console.log(error);
         reject(error);
       });
   });

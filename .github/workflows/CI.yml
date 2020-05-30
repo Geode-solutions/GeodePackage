@@ -24,7 +24,7 @@ jobs:
       uses: actions/cache@v1.2.0
       with:
         path: node_modules
-        key: node-${{ matrix.system }}-${{ hashFiles('package-lock.json') }}
+        key: node-${{ hashFiles('package-lock.json') }}
     - name: Compile
       run: |
         npm install

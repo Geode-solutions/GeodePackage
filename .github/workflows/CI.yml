@@ -5,14 +5,18 @@ on:
   pull_request:
 
 jobs:
-  build-linux:
+  build:
     runs-on: ubuntu-18.04
-    container: ${{ matrix.config.container }}
     strategy:
       matrix:
-        config:
-        - {container: "geodesolutions/ubuntu", system: ubuntu}
-        - {container: "geodesolutions/centos", system: rhel}
+        system: [ubuntu, darwin, win64]
+        python: [3.6, 3.7, 3.8]
+        exclude:
+          - system: win64
+            python: 3.8
+        include:
+          - system: rhel
+            python: 2.7
 
     steps:
     - uses: actions/checkout@v1
@@ -20,11 +24,13 @@ jobs:
       uses: actions/cache@v1.2.0
       with:
         path: node_modules
-        key: node-${{ matrix.config.system }}-${{ hashFiles('package-lock.json') }}
+        key: node-${{ matrix.system }}-${{ hashFiles('package-lock.json') }}
     - name: Compile
       run: |
         npm install
-        npm run build -- version ${{ matrix.config.system }}
+        npm run build -- version ${{ matrix.python }}-${{ matrix.system }}
+      env:
+        TOKEN: ${{ secrets.TOKEN }}   
     - name: Notify slack
       if: failure() && github.ref == 'refs/heads/master'
       uses: 8398a7/action-slack@v2
@@ -34,55 +40,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}    
 
-  build-mac:
-    runs-on: macos-latest
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Cache node modules
-      uses: actions/cache@v1.2.0
-      with:
-        path: node_modules
-        key: node-darwin-${{ hashFiles('package-lock.json') }}
-    - name: Compile
-      run: |
-        npm install
-        npm run build -- version darwin
-    - name: Notify slack
-      if: failure() && github.ref == 'refs/heads/master'
-      uses: 8398a7/action-slack@v2
-      with:
-        status: failure
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  
-  build-windows:
-    runs-on: windows-2016
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Cache node modules
-      uses: actions/cache@v1.2.0
-      with:
-        path: node_modules
-        key: node-win64-${{ hashFiles('package-lock.json') }}
-    - name: Compile
-      run: |
-        npm install
-        npm run build -- version win64
-    - name: Notify slack
-      if: failure() && github.ref == 'refs/heads/master'
-      uses: 8398a7/action-slack@v2
-      with:
-        status: failure
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        
   semantic-release:
     runs-on: ubuntu-18.04
-    needs: [build-linux, build-mac, build-windows]
+    needs: build
     steps:
     - uses: actions/checkout@v1
     - run: npx semantic-release

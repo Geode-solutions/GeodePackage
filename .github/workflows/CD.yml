@@ -28,6 +28,8 @@ jobs:
         echo ::set-output name=version::$version
         npm install
         npm run build -- $version ${{ matrix.config.system }}
+      env:
+        TOKEN: ${{ secrets.TOKEN }}   
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:
@@ -60,6 +62,8 @@ jobs:
         echo ::set-output name=version::$version
         npm install
         npm run build -- $version darwin
+      env:
+        TOKEN: ${{ secrets.TOKEN }}   
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:
@@ -92,6 +96,8 @@ jobs:
         echo "::set-output name=version::$version"
         npm install
         npm run build -- $version win64
+      env:
+        TOKEN: ${{ secrets.TOKEN }}       
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:

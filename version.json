@@ -1,7 +1,8 @@
 {
     "geode": "v1.2.1",
     "modules": {
-        "OpenGeode": "v1.1.1"
+        "OpenGeode": "v1.1.1",
+        "OpenGeode-IO": "v1.0.0"
     }
     
 }

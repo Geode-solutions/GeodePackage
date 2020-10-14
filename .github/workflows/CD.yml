@@ -14,9 +14,6 @@ jobs:
         exclude:
           - system: win64
             python: 3.8
-        include:
-          - system: rhel
-            python: 2.7
 
     steps:
     - uses: actions/checkout@v1
@@ -28,7 +25,7 @@ jobs:
     - name: Generate package
       id: package
       run: |
-        version="${GITHUB_REF##*/*/}"
+        version="${GITHUB_REF##*/*/v}"
         echo ::set-output name=version::$version
         npm install
         npm run build -- $version python${{ matrix.python }}-${{ matrix.system }}

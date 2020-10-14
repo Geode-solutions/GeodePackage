@@ -34,22 +34,11 @@ const { exec } = require("child_process");
 const rimraf = require("rimraf").sync;
 
 
-// exec(
-//   "python -m pip install -r server/requirements.txt -t server/pip",
-//   (err, stdout, stderr) => {
-//     console.log(`stdout: ${stdout}`);
-//     console.log(`stderr: ${stderr}`);
-//   }
-// );
-
-
-
-
 const dir = "GeodePackage" + "-" + process.argv[2] + "-" + process.argv[3];
 mkdirp.sync(dir);
 const owner = "Geode-solutions"
 
-var octokit = new Octokit({auth: "cdaf2908ce0d076eca1a10f6d736e023d57e379a"});
+var octokit = new Octokit({auth: process.env.TOKEN});
 
 function getRelease(repo, version, isModule) {
   const outputDirectory = isModule ? path.join(dir, "modules") : dir;
@@ -64,7 +53,6 @@ function getRelease(repo, version, isModule) {
           const asset = assets.data.find(asset => asset.name.includes(process.argv[3]));
           console.log('Asset name:', asset.name);
           let assetUrl = asset.url;
-          assetUrl = assetUrl.concat('?access_token=cdaf2908ce0d076eca1a10f6d736e023d57e379a');
           fetch(assetUrl, {
             headers: {accept: 'application/octet-stream'}
           }).then(response => {

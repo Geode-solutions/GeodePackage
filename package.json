@@ -20,10 +20,11 @@
     "build": "node package"
   },
   "devDependencies": {
-    "@octokit/rest": "^17.9.2",
-    "archiver": "^4.0.1",
-    "extract-zip": "^2.0.0",
+    "@octokit/rest": "^17.11.2",
+    "archiver": "^4.0.2",
+    "extract-zip": "^2.0.1",
     "mkdirp": "^1.0.4",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.1",
+    "rimraf": "^3.0.2"
   }
 }

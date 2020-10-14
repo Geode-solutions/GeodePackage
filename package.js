@@ -30,25 +30,41 @@ const fetch = require('node-fetch');
 const {Octokit} = require('@octokit/rest');
 const mkdirp = require('mkdirp')
 const extract = require('extract-zip')
+const { exec } = require("child_process");
+const rimraf = require("rimraf").sync;
+
+
+// exec(
+//   "python -m pip install -r server/requirements.txt -t server/pip",
+//   (err, stdout, stderr) => {
+//     console.log(`stdout: ${stdout}`);
+//     console.log(`stderr: ${stderr}`);
+//   }
+// );
+
+
+
 
 const dir = "GeodePackage" + "-" + process.argv[2] + "-" + process.argv[3];
 mkdirp.sync(dir);
 const owner = "Geode-solutions"
 
-var octokit = new Octokit({auth: process.env.TOKEN});
+var octokit = new Octokit({auth: "cdaf2908ce0d076eca1a10f6d736e023d57e379a"});
 
-function getRelease(repo, tag, isModule) {
+function getRelease(repo, version, isModule) {
   const outputDirectory = isModule ? path.join(dir, "modules") : dir;
   return new Promise((resolve, reject) => {
-  console.log(repo, tag);
+  console.log(repo, version);
+  const tag = "v" + version;
   octokit.repos.getReleaseByTag({owner, repo, tag}).then(release => {
     const release_id = release.data.id;
-    console.log(release);
-    octokit.repos.listAssetsForRelease({owner, repo, release_id})
+    // console.log(release);
+    octokit.repos.listReleaseAssets({owner, repo, release_id})
         .then(assets => {
           const asset = assets.data.find(asset => asset.name.includes(process.argv[3]));
           console.log('Asset name:', asset.name);
           let assetUrl = asset.url;
+          assetUrl = assetUrl.concat('?access_token=cdaf2908ce0d076eca1a10f6d736e023d57e379a');
           fetch(assetUrl, {
             headers: {accept: 'application/octet-stream'}
           }).then(response => {
@@ -59,11 +75,27 @@ function getRelease(repo, tag, isModule) {
                     console.log('Unzipping', outputFile);
                     try {
                       extract(outputFile, { dir: path.resolve(outputDirectory) }).then(()=>{
+                        let extractedDirectory = "";
                         if( isModule ) {
                           const extractedName = asset.name.slice(0, -4);
-                          fs.renameSync(path.join(outputDirectory, extractedName),path.join(outputDirectory, repo));
+                          extractedDirectory = path.join(outputDirectory, repo);
+                          rimraf(extractedDirectory);
+                          fs.renameSync(path.join(outputDirectory, extractedName),extractedDirectory);
+                        }
+                        else{
+                          extractedDirectory = dir;
                         }
                         console.log('Unzip to:', repo);
+                        const pipDestination = path.join(dir,"server");
+                        if (!fs.existsSync(pipDestination)){
+                        fs.mkdirSync(pipDestination);
+                        }
+                        exec(
+                          "python -m pip install --upgrade -r " + path.join(extractedDirectory,"server/requirements.txt") + " -t " + pipDestination,
+                        (err, stdout, stderr) => {
+                          console.log(`stdout: ${stdout}`);
+                          console.log(`stderr: ${stderr}`);
+                        });
                         resolve();
                       });
                     } catch (error) {
@@ -84,8 +116,8 @@ let config = { modules:[]};
 promises.push(getRelease("Geode", version.geode, false));
 for (let [repo, tag] of Object.entries(version.modules)) {
   const repoGeode = repo.concat(".geode");
-  promises.push(getRelease(repoGeode, tag, true));
   config.modules.push(path.join("modules", repoGeode, "config.json"));
+  promises.push(getRelease(repoGeode, tag, true));
 }
 fs.writeFileSync(path.join(dir,'config.json'), JSON.stringify(config));
 

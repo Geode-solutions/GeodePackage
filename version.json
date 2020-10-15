@@ -1,5 +1,5 @@
 {
-    "geode": "1.2.5",
+    "geode": "1.2.6",
     "modules": {
         "OpenGeode": "1.1.7",
         "OpenGeode-IO": "1.0.4",

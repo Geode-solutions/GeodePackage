@@ -38,7 +38,7 @@ const dir = "GeodePackage" + "-" + process.argv[2] + "-" + process.argv[3];
 mkdirp.sync(dir);
 const owner = "Geode-solutions"
 
-var octokit = new Octokit({auth: process.env.TOKEN});
+var octokit = new Octokit({auth: "739be333025c70c36570896ca874c186407bf6d0"});
 
 function getRelease(repo, version, isModule) {
   const outputDirectory = isModule ? path.join(dir, "modules") : dir;
@@ -78,13 +78,14 @@ function getRelease(repo, version, isModule) {
                         if (!fs.existsSync(pipDestination)){
                         fs.mkdirSync(pipDestination);
                         }
+                        console.log('PIP to:', pipDestination);
                         exec(
                           "python -m pip install --upgrade -r " + path.join(extractedDirectory,"server/requirements.txt") + " -t " + pipDestination,
                         (err, stdout, stderr) => {
                           console.log(`stdout: ${stdout}`);
                           console.log(`stderr: ${stderr}`);
+                          resolve();
                         });
-                        resolve();
                       });
                     } catch (error) {
                       reject(error);

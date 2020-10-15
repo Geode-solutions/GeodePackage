@@ -66,8 +66,8 @@ jobs:
     - name: Generate package
       id: package
       run: |
-        version="${GITHUB_REF##*/*/v}"
-        echo ::set-output name=version::$version
+        $version = ${env:GITHUB_REF} -replace 'refs\/tags\/v', ''
+        echo "::set-output name=version::$version"
         npm install
         npm run build -- $version python${{ matrix.python }}-win64
       env:

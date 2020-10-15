@@ -38,7 +38,7 @@ const dir = "GeodePackage" + "-" + process.argv[2] + "-" + process.argv[3];
 mkdirp.sync(dir);
 const owner = "Geode-solutions"
 
-var octokit = new Octokit({auth: "739be333025c70c36570896ca874c186407bf6d0"});
+var octokit = new Octokit({auth: process.env.TOKEN});
 
 function getRelease(repo, version, isModule) {
   const outputDirectory = isModule ? path.join(dir, "modules") : dir;

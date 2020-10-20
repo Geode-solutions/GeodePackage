@@ -33,10 +33,14 @@ Geode is an open source viewer for manipulating geometric models, from simple me
 
 | Project | Version | Description |
 |---------|---------|-------------|
+| [Geode]          | ![Geode-version] | Geode-solutions software for visualization, modeling and much more |
 | [OpenGeode]          | ![OpenGeode-version] | Open source framework for representing and manipulating geometric models |
 | [OpenGeode-IO]          | ![OpenGeode-IO-version] | Implementation of input and output formats |
 | [OpenGeode-Geosciences]          | ![OpenGeode-Geosciences-version] | Custom objects and algorithms tailored for Geosciences |
 | [OpenGeode-GeosciencesIO]          | ![OpenGeode-GeosciencesIO-version] | Implementation of input and output formats for Geosciences |
+
+[Geode]: https://github.com/Geode-solutions/Geode
+[Geode-version]: https://img.shields.io/github/release/Geode-solutions/Geode.svg
 
 [OpenGeode]: https://github.com/Geode-solutions/OpenGeode
 [OpenGeode-version]: https://img.shields.io/github/release/Geode-solutions/OpenGeode.svg

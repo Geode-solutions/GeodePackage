@@ -28,15 +28,26 @@ var archiver = require('archiver');
 var version = require('./version.json');
 const fetch = require('node-fetch');
 const {Octokit} = require('@octokit/rest');
-const mkdirp = require('mkdirp')
 const extract = require('extract-zip')
-const {exec} = require('child_process');
+const {execSync} = require('child_process');
 const rimraf = require('rimraf').sync;
 
+function pip(pipDestination, extractedDirectory) {
+  console.log('PIP to:', pipDestination);
+  execSync(
+      'python -m pip install --upgrade -r ' +
+          path.join(
+              extractedDirectory,
+              'server/requirements.txt') +
+          ' -t ' + pipDestination,
+          {stdio: 'inherit'});
+}
 
 const dir = 'GeodePackage' +
     '-' + process.argv[2] + '-' + process.argv[3];
-mkdirp.sync(dir);
+fs.mkdirSync(dir);
+const pipDestination = path.join(dir, 'server');
+fs.mkdirSync(pipDestination);
 const owner = 'Geode-solutions'
 
 var octokit = new Octokit({auth: process.env.TOKEN});
@@ -67,36 +78,17 @@ function getRelease(repo, version, isModule) {
                           extract(outputFile, {
                             dir: path.resolve(outputDirectory)
                           }).then(() => {
-                            let extractedDirectory = '';
                             if (isModule) {
-                                const extractedName = asset.name.slice(0, -4);
-                                extractedDirectory =
-                                    path.join(outputDirectory, repo);
-                                rimraf(extractedDirectory);
-                                fs.renameSync(
-                                    path.join(outputDirectory, extractedName),
-                                    extractedDirectory);
-                              }
-                            else {
-                              extractedDirectory = dir;
+                              const extractedName = asset.name.slice(0, -4);
+                              const extractedDirectory =
+                                  path.join(outputDirectory, repo);
+                              rimraf(extractedDirectory);
+                              fs.renameSync(
+                                  path.join(outputDirectory, extractedName),
+                                  extractedDirectory);
                             }
                             console.log('Unzip to:', repo);
-                            const pipDestination = path.join(dir, 'server');
-                            if (!fs.existsSync(pipDestination)) {
-                              fs.mkdirSync(pipDestination);
-                            }
-                            console.log('PIP to:', pipDestination);
-                            exec(
-                                'python -m pip install --upgrade -r ' +
-                                    path.join(
-                                        extractedDirectory,
-                                        'server/requirements.txt') +
-                                    ' -t ' + pipDestination,
-                                (err, stdout, stderr) => {
-                                  console.log(`stdout: ${stdout}`);
-                                  console.log(`stderr: ${stderr}`);
-                                  resolve();
-                                });
+                            resolve();
                           });
                         } catch (error) {
                           reject(error);
@@ -123,6 +115,12 @@ for (let [repo, tag] of Object.entries(version.modules)) {
 fs.writeFileSync(path.join(dir, 'config.json'), JSON.stringify(config));
 
 Promise.all(promises).then(() => {
+  pip(pipDestination, dir);
+  for (let [repo, tag] of Object.entries(version.modules)) {
+    const repoGeode = repo.concat('.geode');
+    pip(pipDestination, path.join(dir, 'modules', repoGeode));
+  }
+
   // create a file to stream archive data to.
   const outputName = path.join(__dirname, dir + '.zip');
   console.log('Output: ', outputName);

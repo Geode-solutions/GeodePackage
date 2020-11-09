@@ -1,9 +1,9 @@
 {
     "geode": "1.2.6",
     "modules": {
-        "OpenGeode": "1.2.4",
-        "OpenGeode-IO": "1.0.4",
-        "OpenGeode-Geosciences": "1.0.2",
-        "OpenGeode-GeosciencesIO": "1.0.1"
+        "OpenGeode": "1.3.0",
+        "OpenGeode-IO": "1.1.0",
+        "OpenGeode-Geosciences": "1.1.0",
+        "OpenGeode-GeosciencesIO": "1.1.0"
     }
 }

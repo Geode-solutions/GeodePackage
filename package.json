@@ -23,7 +23,7 @@
     "@octokit/rest": "^17.11.2",
     "archiver": "^4.0.2",
     "extract-zip": "^2.0.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "rimraf": "^3.0.2"
   }
 }

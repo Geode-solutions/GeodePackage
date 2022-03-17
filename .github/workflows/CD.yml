@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         python: [3.7, 3.8]
-
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python }}
@@ -51,7 +50,6 @@ jobs:
     strategy:
       matrix:
         python: [3.7]
-
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python }}

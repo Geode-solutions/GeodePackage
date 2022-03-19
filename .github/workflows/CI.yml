@@ -69,7 +69,7 @@ jobs:
 
   semantic-release:
     runs-on: ubuntu-18.04
-    needs: [build-linux, build-windows]
+    needs: [build-linux]
     steps:
     - uses: actions/checkout@v1
     - run: npx semantic-release

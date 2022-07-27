@@ -6,10 +6,10 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.7, 3.8]
+        python: ["3.7", "3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python }}
@@ -27,13 +27,13 @@ jobs:
         version="${GITHUB_REF##*/*/v}"
         echo ::set-output name=version::$version
         npm install
-        npm run build -- $version python${{ matrix.python }}-ubuntu
+        npm run build -- $version python${{ matrix.python }}-linux
       env:
         TOKEN: ${{ secrets.TOKEN }}   
     - name: Upload
       uses: softprops/action-gh-release@v1
       with:
-        files: "GeodePackage-${{ steps.package.outputs.version }}-python${{ matrix.python }}-ubuntu.zip"
+        files: "GeodePackage-${{ steps.package.outputs.version }}-python${{ matrix.python }}-linux.zip"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Notify slack
@@ -46,10 +46,10 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}  
 
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-latest
     strategy:
       matrix:
-        python: [3.7]
+        python: ["3.7", "3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python }}

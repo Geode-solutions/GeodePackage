@@ -6,10 +6,10 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.7, 3.8]
+        python: ["3.7", "3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python }}
@@ -24,7 +24,7 @@ jobs:
     - name: Compile
       run: |
         npm install
-        npm run build -- version python${{ matrix.python }}-ubuntu
+        npm run build -- version python${{ matrix.python }}-linux
       env:
         TOKEN: ${{ secrets.TOKEN }}   
     - name: Notify slack
@@ -37,10 +37,10 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build-windows:
-    runs-on: windows-2019
+    runs-on: windows-latest
     strategy:
       matrix:
-        python: [3.7]
+        python: ["3.7", "3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python }}
@@ -68,10 +68,6 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   semantic-release:
-    runs-on: ubuntu-18.04
-    needs: [build-linux]
-    steps:
-    - uses: actions/checkout@v1
-    - run: npx semantic-release
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+    needs: [build-linux, build-windows]
+    uses: Geode-solutions/actions/.github/workflows/release.yml@master
+    secrets: inherit

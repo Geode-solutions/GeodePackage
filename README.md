@@ -73,4 +73,4 @@ The issue list of this repo is exclusively for bug reports and feature requests.
 
 [LGPL-3.0](https://opensource.org/licenses/LGPL-3.0)
 
-Copyright (c) 2019 - 2021, Geode-solutions
+Copyright (c) 2019 - 2022, Geode-solutions

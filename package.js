@@ -45,6 +45,7 @@ function pip(pipDestination, extractedDirectory) {
 
 const dir = 'GeodePackage' +
     '-' + process.argv[2] + '-' + process.argv[3];
+console.log(dir);
 fs.mkdirSync(dir);
 const pipDestination = path.join(dir, 'server');
 fs.mkdirSync(pipDestination);
@@ -60,8 +61,10 @@ function getRelease(repo, version, isModule) {
     octokit.repos.getReleaseByTag({owner, repo, tag})
         .then(release => {
           const release_id = release.data.id;
+          console.log(release.data);
           octokit.repos.listReleaseAssets({owner, repo, release_id})
               .then(assets => {
+                console.log(assets.data);
                 const asset = assets.data.find(
                     asset => asset.name.includes(process.argv[3]));
                 console.log('Asset name:', asset.name);

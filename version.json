@@ -3,7 +3,7 @@
     "modules": {
         "OpenGeode": "1.7.18",
         "OpenGeode-IO": "1.4.3",
-        "OpenGeode-Geosciences": "1.4.7",
+        "OpenGeode-Geosciences": "1.4.8",
         "OpenGeode-GeosciencesIO": "1.3.4"
     }
 }

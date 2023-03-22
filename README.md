@@ -28,7 +28,6 @@ Geode is an open source viewer for manipulating geometric models, from simple me
 
 ![Geode](https://github.com/Geode-solutions/GeodePackage/blob/master/UI.png)
 
-
 ## Ecosystem
 
 | Project | Version | Description |

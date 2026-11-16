@@ -15,8 +15,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/license-LGPL 3.0-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="Semantic-release">
-  <a href="https://slackin-opengeode.herokuapp.com">
-    <img src="https://slackin-opengeode.herokuapp.com/badge.svg" alt="Slack invite">
+  <a href="https://geode-solutions.com/#slack">
+    <img src="https://img.icons8.com/?size=20&id=kikR2jIn6485&format=png&color=000000" alt="Slack invite">
   </a>
 </p>
 
@@ -64,7 +64,7 @@ Run the ```geode``` executable!
 
 
 ## Questions
-For questions and support please use the official [slack](https://slackin-opengeode.herokuapp.com) and channel #help. 
+For questions and support please use the official [slack](https://geode-solutions.com/#slack) and channel #help. 
 The issue list of this repo is exclusively for bug reports and feature requests. 
 
 
